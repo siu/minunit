@@ -1,6 +1,6 @@
-int minunit_run = 0;
-int minunit_assert = 0;
-int minunit_fail = 0;
+static int minunit_run = 0;
+static int minunit_assert = 0;
+static int minunit_fail = 0;
 
 #define MU_TEST(method_name) static char * method_name()
 #define MU_TEST_SUITE(suite_name) int main(int argc, char **argv)
