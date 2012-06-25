@@ -5,11 +5,14 @@ static int minunit_run = 0;
 static int minunit_assert = 0;
 static int minunit_fail = 0;
 
-void (*minunit_setup)(void) = NULL;
-void (*minunit_teardown)(void) = NULL;
+#define MINUNIT_MESSAGE_LEN 1024
+static char minunit_last_message[MINUNIT_MESSAGE_LEN];
 
-#define MU_TEST(method_name) static char * method_name()
-#define MU_TEST_SUITE(suite_name) void suite_name()
+static void (*minunit_setup)(void) = NULL;
+static void (*minunit_teardown)(void) = NULL;
+
+#define MU_TEST(method_name) static int method_name()
+#define MU_TEST_SUITE(suite_name) static void suite_name()
 
 #define MU_SUITE_CONFIGURE(setup_fun, teardown_fun) \
 	minunit_setup = setup_fun; \
@@ -20,9 +23,8 @@ void (*minunit_teardown)(void) = NULL;
 		if (!(test)) {\
 			minunit_fail++;\
 			printf("F");\
-			char *m = (char *) malloc(strlen(message) + 30);\
-			sprintf(m, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
-			return m;\
+			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
+			return 1;\
 		} else {\
 			printf(".");\
 		}\
@@ -30,10 +32,10 @@ void (*minunit_teardown)(void) = NULL;
 
 #define MU_RUN_TEST(test) do {\
 		if (minunit_setup) (*minunit_setup)();\
-		char *message = test();\
+		int fail = test();\
 		minunit_run++;\
-		if (message) {\
-			printf("\n%s\n", message);\
+		if (fail) {\
+			printf("\n%s\n", minunit_last_message);\
 		}\
 		fflush(stdout);\
 		if (minunit_teardown) (*minunit_teardown)();\
