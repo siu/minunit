@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 #include <stdio.h>
 #include <time.h>
 
@@ -105,4 +109,8 @@ static double mu_timer_diff(timespec_t *start, timespec_t *end)
 	}
 	return (double)diff.tv_sec + (double)diff.tv_nsec/MINUNIT_NSECS;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
