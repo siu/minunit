@@ -9,6 +9,7 @@
 #define MINUNIT_MESSAGE_LEN 1024
 // Do not change
 #define MINUNIT_NSECS 1000000000
+#define EPSILON 1E-12
 
 // Misc. counters
 static int minunit_run = 0;
@@ -90,7 +91,7 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_assert++;\
 		double e = (expected);\
 		double r = (result);\
-		if (e != r) {\
+		if (fabs(e-r) > EPSILON) {\
 			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, e, r);\
 			return 1;\
 		}\
