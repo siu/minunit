@@ -42,7 +42,11 @@ static void (*minunit_teardown)(void) = NULL;
 		int fail = test();\
 		minunit_run++;\
 		if (fail) {\
+			minunit_fail++;\
+			printf("F");\
 			printf("\n%s\n", minunit_last_message);\
+		} else {\
+			printf(".");\
 		}\
 		fflush(stdout);\
 		if (minunit_teardown) (*minunit_teardown)();\
@@ -63,12 +67,28 @@ static void (*minunit_teardown)(void) = NULL;
 #define MU_ASSERT(test, message) do {\
 		minunit_assert++;\
 		if (!(test)) {\
-			minunit_fail++;\
-			printf("F");\
 			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
 			return 1;\
-		} else {\
-			printf(".");\
+		}\
+	} while (0)
+
+#define MU_ASSERT_EQ(expected, result) do {\
+		minunit_assert++;\
+		int e = (expected);\
+		int r = (result);\
+		if (e != r) {\
+			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %d expected but was %d", __func__, __FILE__, __LINE__, e, r);\
+			return 1;\
+		}\
+	} while (0)
+
+#define MU_ASSERT_DOUBLE_EQ(expected, result) do {\
+		minunit_assert++;\
+		double e = (expected);\
+		double r = (result);\
+		if (e != r) {\
+			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, e, r);\
+			return 1;\
 		}\
 	} while (0)
 
