@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <time.h>
 
 // Maximum length of last message

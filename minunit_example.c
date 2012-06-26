@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "minunit.h"
 
 static int foo = 0;
