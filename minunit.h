@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 // Maximum length of last message
 #define MINUNIT_MESSAGE_LEN 1024
@@ -69,7 +70,15 @@ static void (*minunit_teardown)(void) = NULL;
 	} while (0)
 
 // Assertions
-#define MU_ASSERT(test, message) do {\
+#define mu_check(test) do {\
+		minunit_assert++;\
+		if (!(test)) {\
+			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, #test);\
+			return 1;\
+		}\
+	} while (0)
+
+#define mu_assert(test, message) do {\
 		minunit_assert++;\
 		if (!(test)) {\
 			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
@@ -77,7 +86,7 @@ static void (*minunit_teardown)(void) = NULL;
 		}\
 	} while (0)
 
-#define MU_ASSERT_EQ(expected, result) do {\
+#define mu_assert_int_eq(expected, result) do {\
 		minunit_assert++;\
 		int e = (expected);\
 		int r = (result);\
@@ -87,7 +96,7 @@ static void (*minunit_teardown)(void) = NULL;
 		}\
 	} while (0)
 
-#define MU_ASSERT_DOUBLE_EQ(expected, result) do {\
+#define mu_assert_double_eq(expected, result) do {\
 		minunit_assert++;\
 		double e = (expected);\
 		double r = (result);\
