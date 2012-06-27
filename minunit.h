@@ -16,6 +16,7 @@
 static int minunit_run = 0;
 static int minunit_assert = 0;
 static int minunit_fail = 0;
+static int minunit_status = 0;
 
 // Timers
 typedef struct timespec timespec_t ;
@@ -30,7 +31,7 @@ static void (*minunit_setup)(void) = NULL;
 static void (*minunit_teardown)(void) = NULL;
 
 // Definitions
-#define MU_TEST(method_name) static int method_name()
+#define MU_TEST(method_name) static void method_name()
 #define MU_TEST_SUITE(suite_name) static void suite_name()
 
 // Configure setup and teardown functions
@@ -45,14 +46,13 @@ static void (*minunit_teardown)(void) = NULL;
 			clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &minunit_proc_timer);\
 		}\
 		if (minunit_setup) (*minunit_setup)();\
-		int fail = test();\
+		minunit_status = 0;\
+		test();\
 		minunit_run++;\
-		if (fail) {\
+		if (minunit_status) {\
 			minunit_fail++;\
 			printf("F");\
 			printf("\n%s\n", minunit_last_message);\
-		} else {\
-			printf(".");\
 		}\
 		fflush(stdout);\
 		if (minunit_teardown) (*minunit_teardown)();\
@@ -74,15 +74,28 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_assert++;\
 		if (!(test)) {\
 			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, #test);\
-			return 1;\
+			minunit_status = 1;\
+			return;\
+		} else {\
+			printf(".");\
 		}\
+	} while (0)
+
+#define mu_fail(message) do {\
+		minunit_assert++;\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
+		minunit_status = 1;\
+		return;\
 	} while (0)
 
 #define mu_assert(test, message) do {\
 		minunit_assert++;\
 		if (!(test)) {\
 			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
-			return 1;\
+			minunit_status = 1;\
+			return;\
+		} else {\
+			printf(".");\
 		}\
 	} while (0)
 
@@ -92,7 +105,10 @@ static void (*minunit_teardown)(void) = NULL;
 		int r = (result);\
 		if (e != r) {\
 			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %d expected but was %d", __func__, __FILE__, __LINE__, e, r);\
-			return 1;\
+			minunit_status = 1;\
+			return;\
+		} else {\
+			printf(".");\
 		}\
 	} while (0)
 
@@ -102,7 +118,10 @@ static void (*minunit_teardown)(void) = NULL;
 		double r = (result);\
 		if (fabs(e-r) > MINUNIT_EPSILON) {\
 			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, e, r);\
-			return 1;\
+			minunit_status = 1;\
+			return;\
+		} else {\
+			printf(".");\
 		}\
 	} while (0)
 
