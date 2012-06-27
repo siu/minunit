@@ -18,8 +18,8 @@ static int minunit_fail = 0;
 
 // Timers
 typedef struct timespec timespec_t ;
-static timespec_t minunit_real_timer = { .tv_sec = 0, .tv_nsec = 0 };
-static timespec_t minunit_proc_timer = { .tv_sec = 0, .tv_nsec = 0 };
+static timespec_t minunit_real_timer = { 0, 0 };
+static timespec_t minunit_proc_timer = { 0, 0 };
 
 // Last message
 static char minunit_last_message[MINUNIT_MESSAGE_LEN];
