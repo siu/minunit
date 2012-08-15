@@ -101,10 +101,10 @@ static void (*minunit_teardown)(void) = NULL;
 
 #define mu_assert_int_eq(expected, result) do {\
 		minunit_assert++;\
-		int e = (expected);\
-		int r = (result);\
-		if (e != r) {\
-			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %d expected but was %d", __func__, __FILE__, __LINE__, e, r);\
+		int minunit_tmp_e = (expected);\
+		int minunit_tmp_r = (result);\
+		if (minunit_tmp_e != minunit_tmp_r) {\
+			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %d expected but was %d", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
 			minunit_status = 1;\
 			return;\
 		} else {\
@@ -114,10 +114,10 @@ static void (*minunit_teardown)(void) = NULL;
 
 #define mu_assert_double_eq(expected, result) do {\
 		minunit_assert++;\
-		double e = (expected);\
-		double r = (result);\
-		if (fabs(e-r) > MINUNIT_EPSILON) {\
-			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, e, r);\
+		double minunit_tmp_e = (expected);\
+		double minunit_tmp_r = (result);\
+		if (fabs(minunit_tmp_e-minunit_tmp_r) > MINUNIT_EPSILON) {\
+			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
 			minunit_status = 1;\
 			return;\
 		} else {\
