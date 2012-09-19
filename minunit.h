@@ -9,7 +9,6 @@
 // Maximum length of last message
 #define MINUNIT_MESSAGE_LEN 1024
 // Do not change
-#define MINUNIT_NSECS 1000000000
 #define MINUNIT_EPSILON 1E-12
 
 // Misc. counters
@@ -127,20 +126,13 @@ static void (*minunit_teardown)(void) = NULL;
 	} while (0)
 
 // Misc. utilities
-static double mu_timer_diff(timespec_t *start, timespec_t *end)
+static inline double mu_timer_diff(timespec_t *start, timespec_t *end)
 {
-	timespec_t diff;
-	if ((end->tv_nsec - start->tv_nsec) < 0) {
-		diff.tv_sec = end->tv_sec - start->tv_sec - 1;
-		diff.tv_nsec = MINUNIT_NSECS + end->tv_nsec - start->tv_nsec;
-	} else {
-		diff.tv_sec = end->tv_sec - start->tv_sec;
-		diff.tv_nsec = end->tv_nsec - start->tv_nsec;
-	}
-	return (double)diff.tv_sec + (double)diff.tv_nsec/MINUNIT_NSECS;
+#define MINUNIT_NSECS 1e9
+	return (((  end->tv_sec * MINUNIT_NSECS) +   end->tv_nsec) -
+			((start->tv_sec * MINUNIT_NSECS) + start->tv_nsec)) / MINUNIT_NSECS;
 }
 
 #ifdef __cplusplus
 }
 #endif
-
