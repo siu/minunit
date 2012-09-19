@@ -32,6 +32,7 @@ static void (*minunit_teardown)(void) = NULL;
 // Definitions
 #define MU_TEST(method_name) static void method_name()
 #define MU_TEST_SUITE(suite_name) static void suite_name()
+#define MU_RUN_SUITE(suite_name) suite_name()
 
 // Configure setup and teardown functions
 #define MU_SUITE_CONFIGURE(setup_fun, teardown_fun) do {\
