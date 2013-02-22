@@ -36,104 +36,109 @@ static void (*minunit_teardown)(void) = NULL;
 #define MU_TEST(method_name) static void method_name()
 #define MU_TEST_SUITE(suite_name) static void suite_name()
 
+#define MU__SAFE_BLOCK(block) do {\
+	block\
+} while(0)
+
 // Run test suite and unset setup and teardown functions
-#define MU_RUN_SUITE(suite_name) do {\
+#define MU_RUN_SUITE(suite_name) MU__SAFE_BLOCK(\
 	suite_name();\
 	minunit_setup = NULL;\
 	minunit_teardown = NULL;\
-	} while(0)
+)
 
 // Configure setup and teardown functions
-#define MU_SUITE_CONFIGURE(setup_fun, teardown_fun) do {\
+#define MU_SUITE_CONFIGURE(setup_fun, teardown_fun) MU__SAFE_BLOCK(\
 	minunit_setup = setup_fun;\
 	minunit_teardown = teardown_fun;\
-	} while (0)
+)
 
 // Test runner
-#define MU_RUN_TEST(test) do {\
-		if (minunit_real_timer.tv_sec==0 && minunit_real_timer.tv_nsec==0) {\
-			clock_gettime(CLOCK_MONOTONIC, &minunit_real_timer);\
-			clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &minunit_proc_timer);\
-		}\
-		if (minunit_setup) (*minunit_setup)();\
-		minunit_status = 0;\
-		test();\
-		minunit_run++;\
-		if (minunit_status) {\
-			minunit_fail++;\
-			printf("F");\
-			printf("\n%s\n", minunit_last_message);\
-		}\
-		fflush(stdout);\
-		if (minunit_teardown) (*minunit_teardown)();\
-	} while (0)
+#define MU_RUN_TEST(test) MU__SAFE_BLOCK(\
+	if (minunit_real_timer.tv_sec==0 && minunit_real_timer.tv_nsec==0) {\
+		clock_gettime(CLOCK_MONOTONIC, &minunit_real_timer);\
+		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &minunit_proc_timer);\
+	}\
+	if (minunit_setup) (*minunit_setup)();\
+	minunit_status = 0;\
+	test();\
+	minunit_run++;\
+	if (minunit_status) {\
+		minunit_fail++;\
+		printf("F");\
+		printf("\n%s\n", minunit_last_message);\
+	}\
+	fflush(stdout);\
+	if (minunit_teardown) (*minunit_teardown)();\
+)
 
 // Report
-#define MU_REPORT() do {\
+#define MU_REPORT() MU__SAFE_BLOCK(\
 	printf("\n\n%d tests, %d assertions, %d failures\n", minunit_run, minunit_assert, minunit_fail);\
-	timespec_t end_real_timer, end_proc_timer;\
+	timespec_t end_real_timer;\
+	timespec_t end_proc_timer;\
 	clock_gettime(CLOCK_MONOTONIC, &end_real_timer);\
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_proc_timer);\
 	printf("\nFinished in %.8f seconds (real) %.8f seconds (proc)\n\n",\
 		mu_timer_diff(&minunit_real_timer, &end_real_timer),\
 		mu_timer_diff(&minunit_proc_timer, &end_proc_timer));\
-	} while (0)
+)
 
 // Assertions
-#define mu_check(test) do {\
-		minunit_assert++;\
-		if (!(test)) {\
-			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, #test);\
-			minunit_status = 1;\
-			return;\
-		} else {\
-			printf(".");\
-		}\
-	} while (0)
+#define mu_check(test) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	if (!(test)) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, #test);\
+		minunit_status = 1;\
+		return;\
+	} else {\
+		printf(".");\
+	}\
+)
 
-#define mu_fail(message) do {\
-		minunit_assert++;\
+#define mu_fail(message) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
+	minunit_status = 1;\
+	return;\
+)
+
+#define mu_assert(test, message) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	if (!(test)) {\
 		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
 		minunit_status = 1;\
 		return;\
-	} while (0)
+	} else {\
+		printf(".");\
+	}\
+)
 
-#define mu_assert(test, message) do {\
-		minunit_assert++;\
-		if (!(test)) {\
-			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
-			minunit_status = 1;\
-			return;\
-		} else {\
-			printf(".");\
-		}\
-	} while (0)
+#define mu_assert_int_eq(expected, result) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	int minunit_tmp_e = (expected);\
+	int minunit_tmp_r = (result);\
+	if (minunit_tmp_e != minunit_tmp_r) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %d expected but was %d", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
+		minunit_status = 1;\
+		return;\
+	} else {\
+		printf(".");\
+	}\
+)
 
-#define mu_assert_int_eq(expected, result) do {\
-		minunit_assert++;\
-		int minunit_tmp_e = (expected);\
-		int minunit_tmp_r = (result);\
-		if (minunit_tmp_e != minunit_tmp_r) {\
-			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %d expected but was %d", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
-			minunit_status = 1;\
-			return;\
-		} else {\
-			printf(".");\
-		}\
-	} while (0)
-
-#define mu_assert_double_eq(expected, result) do {\
-		minunit_assert++;\
-		double minunit_tmp_e = (expected);\
-		double minunit_tmp_r = (result);\
-		if (fabs(minunit_tmp_e-minunit_tmp_r) > MINUNIT_EPSILON) {\
-			snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
-			minunit_status = 1;\
-			return;\
-		} else {\
-			printf(".");\
-		}\
-	} while (0)
+#define mu_assert_double_eq(expected, result) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	double minunit_tmp_e = (expected);\
+	double minunit_tmp_r = (result);\
+	if (fabs(minunit_tmp_e-minunit_tmp_r) > MINUNIT_EPSILON) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
+		minunit_status = 1;\
+		return;\
+	} else {\
+		printf(".");\
+	}\
+)
 
 // Misc. utilities
 static inline double mu_timer_diff(timespec_t *start, timespec_t *end)
