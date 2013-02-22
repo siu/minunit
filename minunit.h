@@ -1,3 +1,6 @@
+#ifndef __MINUNIT_H__
+#define __MINUNIT_H__
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
@@ -143,3 +146,5 @@ static inline double mu_timer_diff(timespec_t *start, timespec_t *end)
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* __MINUNIT_H__ */
