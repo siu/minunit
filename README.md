@@ -45,7 +45,7 @@ like:
 
 	gcc minunit_example.c -lrt -lm -o minunit_example
 
-Don't forget to add -ltr for the timer and -lm for linking the function fabs
+Don't forget to add -lrt for the timer and -lm for linking the function fabs
 used in mu_assert_double_eq.
 
 ## Setup and teardown functions
