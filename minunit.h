@@ -36,6 +36,11 @@
 // Do not change
 #define MINUNIT_EPSILON 1E-12
 
+// Colors for output
+#define MINUNIT_FAIL_COLOR "\033[31m"
+#define MINUNIT_PASS_COLOR "\033[32m"
+#define MINUNIT_RESET_COLOR "\033[0m"
+
 // Misc. counters
 static int minunit_run = 0;
 static int minunit_assert = 0;
@@ -86,7 +91,7 @@ static void (*minunit_teardown)(void) = NULL;
 	minunit_run++;\
 	if (minunit_status) {\
 		minunit_fail++;\
-		printf("F");\
+		printf(MINUNIT_FAIL_COLOR "F" MINUNIT_RESET_COLOR);\
 		printf("\n%s\n", minunit_last_message);\
 	}\
 	fflush(stdout);\
@@ -107,17 +112,17 @@ static void (*minunit_teardown)(void) = NULL;
 #define mu_check(test) MU__SAFE_BLOCK(\
 	minunit_assert++;\
 	if (!(test)) {\
-		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, #test);\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:" MINUNIT_FAIL_COLOR "\n\t%s:%d: %s" MINUNIT_RESET_COLOR, __func__, __FILE__, __LINE__, #test);\
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		printf(MINUNIT_PASS_COLOR "." MINUNIT_RESET_COLOR);\
 	}\
 )
 
 #define mu_fail(message) MU__SAFE_BLOCK(\
 	minunit_assert++;\
-	snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
+	snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:" MINUNIT_FAIL_COLOR "\n\t%s:%d: %s" MINUNIT_RESET_COLOR, __func__, __FILE__, __LINE__, message);\
 	minunit_status = 1;\
 	return;\
 )
@@ -125,11 +130,11 @@ static void (*minunit_teardown)(void) = NULL;
 #define mu_assert(test, message) MU__SAFE_BLOCK(\
 	minunit_assert++;\
 	if (!(test)) {\
-		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:" MINUNIT_FAIL_COLOR "\n\t%s:%d: %s" MINUNIT_RESET_COLOR, __func__, __FILE__, __LINE__, message);\
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		printf(MINUNIT_PASS_COLOR "." MINUNIT_RESET_COLOR);\
 	}\
 )
 
@@ -138,11 +143,11 @@ static void (*minunit_teardown)(void) = NULL;
 	int minunit_tmp_e = (expected);\
 	int minunit_tmp_r = (result);\
 	if (minunit_tmp_e != minunit_tmp_r) {\
-		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %d expected but was %d", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:" MINUNIT_FAIL_COLOR "\n\t%s:%d: %d expected but was %d" MINUNIT_RESET_COLOR, __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		printf(MINUNIT_PASS_COLOR "." MINUNIT_RESET_COLOR);\
 	}\
 )
 
@@ -151,11 +156,11 @@ static void (*minunit_teardown)(void) = NULL;
 	double minunit_tmp_e = (expected);\
 	double minunit_tmp_r = (result);\
 	if (fabs(minunit_tmp_e-minunit_tmp_r) > MINUNIT_EPSILON) {\
-		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:" MINUNIT_FAIL_COLOR "\n\t%s:%d: %g expected but was %g" MINUNIT_RESET_COLOR , __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		printf(MINUNIT_PASS_COLOR "." MINUNIT_RESET_COLOR);\
 	}\
 )
 
