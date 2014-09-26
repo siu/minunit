@@ -197,7 +197,7 @@ static void (*minunit_teardown)(void) = NULL;
  * The returned real time is only useful for computing an elapsed time
  * between two calls to this function.
  */
-double mu_timer_real( )
+static double mu_timer_real( )
 {
 #if defined(_WIN32)
 	FILETIME tm;
@@ -272,7 +272,7 @@ double mu_timer_real( )
  * Returns the amount of CPU time used by the current process,
  * in seconds, or -1.0 if an error occurred.
  */
-double mu_timer_cpu( )
+static double mu_timer_cpu( )
 {
 #if defined(_WIN32)
 	/* Windows -------------------------------------------------- */
