@@ -56,29 +56,29 @@
 #include <stdio.h>
 #include <math.h>
 
-// Maximum length of last message
+/*  Maximum length of last message */
 #define MINUNIT_MESSAGE_LEN 1024
-// Do not change
+/*  Do not change */
 #define MINUNIT_EPSILON 1E-12
 
-// Misc. counters
+/*  Misc. counters */
 static int minunit_run = 0;
 static int minunit_assert = 0;
 static int minunit_fail = 0;
 static int minunit_status = 0;
 
-// Timers
+/*  Timers */
 static double minunit_real_timer = 0;
 static double minunit_proc_timer = 0;
 
-// Last message
+/*  Last message */
 static char minunit_last_message[MINUNIT_MESSAGE_LEN];
 
-// Test setup and teardown function pointers
+/*  Test setup and teardown function pointers */
 static void (*minunit_setup)(void) = NULL;
 static void (*minunit_teardown)(void) = NULL;
 
-// Definitions
+/*  Definitions */
 #define MU_TEST(method_name) static void method_name()
 #define MU_TEST_SUITE(suite_name) static void suite_name()
 
@@ -86,20 +86,20 @@ static void (*minunit_teardown)(void) = NULL;
 	block\
 } while(0)
 
-// Run test suite and unset setup and teardown functions
+/*  Run test suite and unset setup and teardown functions */
 #define MU_RUN_SUITE(suite_name) MU__SAFE_BLOCK(\
 	suite_name();\
 	minunit_setup = NULL;\
 	minunit_teardown = NULL;\
 )
 
-// Configure setup and teardown functions
+/*  Configure setup and teardown functions */
 #define MU_SUITE_CONFIGURE(setup_fun, teardown_fun) MU__SAFE_BLOCK(\
 	minunit_setup = setup_fun;\
 	minunit_teardown = teardown_fun;\
 )
 
-// Test runner
+/*  Test runner */
 #define MU_RUN_TEST(test) MU__SAFE_BLOCK(\
 	if (minunit_real_timer==0 && minunit_real_timer==0) {\
 		minunit_real_timer = mu_timer_real();\
@@ -118,17 +118,19 @@ static void (*minunit_teardown)(void) = NULL;
 	if (minunit_teardown) (*minunit_teardown)();\
 )
 
-// Report
+/*  Report */
 #define MU_REPORT() MU__SAFE_BLOCK(\
+	double minunit_end_real_timer;\
+	double minunit_end_proc_timer;\
 	printf("\n\n%d tests, %d assertions, %d failures\n", minunit_run, minunit_assert, minunit_fail);\
-	double minunit_end_real_timer = mu_timer_real();\
-	double minunit_end_proc_timer = mu_timer_cpu();\
+	minunit_end_real_timer = mu_timer_real();\
+	minunit_end_proc_timer = mu_timer_cpu();\
 	printf("\nFinished in %.8f seconds (real) %.8f seconds (proc)\n\n",\
 		minunit_end_real_timer - minunit_real_timer,\
 		minunit_end_proc_timer - minunit_proc_timer);\
 )
 
-// Assertions
+/*  Assertions */
 #define mu_check(test) MU__SAFE_BLOCK(\
 	minunit_assert++;\
 	if (!(test)) {\
@@ -159,9 +161,11 @@ static void (*minunit_teardown)(void) = NULL;
 )
 
 #define mu_assert_int_eq(expected, result) MU__SAFE_BLOCK(\
+	int minunit_tmp_e;\
+	int minunit_tmp_r;\
 	minunit_assert++;\
-	int minunit_tmp_e = (expected);\
-	int minunit_tmp_r = (result);\
+	minunit_tmp_e = (expected);\
+	minunit_tmp_r = (result);\
 	if (minunit_tmp_e != minunit_tmp_r) {\
 		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %d expected but was %d", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
 		minunit_status = 1;\
@@ -172,9 +176,11 @@ static void (*minunit_teardown)(void) = NULL;
 )
 
 #define mu_assert_double_eq(expected, result) MU__SAFE_BLOCK(\
+	double minunit_tmp_e;\
+	double minunit_tmp_r;\
 	minunit_assert++;\
-	double minunit_tmp_e = (expected);\
-	double minunit_tmp_r = (result);\
+	minunit_tmp_e = (expected);\
+	minunit_tmp_r = (result);\
 	if (fabs(minunit_tmp_e-minunit_tmp_r) > MINUNIT_EPSILON) {\
 		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
 		minunit_status = 1;\
