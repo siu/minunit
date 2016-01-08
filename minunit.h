@@ -43,6 +43,7 @@
 #include <sys/time.h>	/* gethrtime(), gettimeofday() */
 #include <sys/resource.h>
 #include <sys/times.h>
+#include <string.h>
 
 #if defined(__MACH__) && defined(__APPLE__)
 #include <mach/mach.h>
@@ -183,6 +184,29 @@ static void (*minunit_teardown)(void) = NULL;
 	minunit_tmp_r = (result);\
 	if (fabs(minunit_tmp_e-minunit_tmp_r) > MINUNIT_EPSILON) {\
 		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %g expected but was %g", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
+		minunit_status = 1;\
+		return;\
+	} else {\
+		printf(".");\
+	}\
+)
+
+#define mu_assert_string_eq(expected, result) MU__SAFE_BLOCK(\
+	char* minunit_tmp_e;\
+	char* minunit_tmp_r;\
+	minunit_assert++;\
+	if (!expected) {\
+		minunit_tmp_e = "<null pointer>";\
+	} else {\
+		minunit_tmp_e = (expected);\
+	}\
+	if (!result) {\
+		minunit_tmp_r = "<null pointer>";\
+	} else {\
+		minunit_tmp_r = (result);\
+	}\
+	if(strcmp(minunit_tmp_e, minunit_tmp_r)) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: '%s' expected but was '%s'", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
 		minunit_status = 1;\
 		return;\
 	} else {\
