@@ -29,6 +29,8 @@
 
 #if defined(_WIN32)
 #include <Windows.h>
+#define __func__ __FUNCTION__
+#define snprintf _snprintf
 
 #elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
 
