@@ -150,10 +150,30 @@ static void (*minunit_teardown)(void) = NULL;
 	return;\
 )
 
+#define mu_failf(format, ...) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	int numwr=snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: ", __func__, __FILE__, __LINE__);\
+	snprintf(minunit_last_message+numwr, MINUNIT_MESSAGE_LEN-numwr, format, __VA_ARGS__);\
+	minunit_status = 1;\
+	return;\
+)
+
 #define mu_assert(test, message) MU__SAFE_BLOCK(\
 	minunit_assert++;\
 	if (!(test)) {\
 		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
+		minunit_status = 1;\
+		return;\
+	} else {\
+		printf(".");\
+	}\
+)
+
+#define mu_assertf(test, format, ...) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	if (!(test)) {\
+		int numwr=snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: ", __func__, __FILE__, __LINE__);\
+		snprintf(minunit_last_message+numwr, MINUNIT_MESSAGE_LEN-numwr, format, __VA_ARGS__);\
 		minunit_status = 1;\
 		return;\
 	} else {\
