@@ -192,8 +192,8 @@ static void (*minunit_teardown)(void) = NULL;
 )
 
 #define mu_assert_string_eq(expected, result) MU__SAFE_BLOCK(\
-	char* minunit_tmp_e;\
-	char* minunit_tmp_r;\
+	const char* minunit_tmp_e;\
+	const char* minunit_tmp_r;\
 	minunit_assert++;\
 	if (!expected) {\
 		minunit_tmp_e = "<null pointer>";\
