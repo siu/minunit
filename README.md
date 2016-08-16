@@ -64,11 +64,11 @@ mu_fail(message): will fail and show the message
 mu_assert(condition, message): will pass if the condition is true, otherwise it
 will show the failed condition and the message
 
-mu_assert_int_eq(expected, result, message): it will pass if the two numbers are
-equal or show their values and the message
+mu_assert_int_eq(expected, result): it will pass if the two numbers are
+equal or show their values as the error message
 
-mu_assert_double_eq(expected, result, message): it will pass if the two values
-are almost equal or show their values and the message. The value of
+mu_assert_double_eq(expected, result): it will pass if the two values
+are almost equal or show their values as the error message. The value of
 MINUNIT_EPSILON sets the threshold to determine if the values are close enough.
 
 ## Authors
