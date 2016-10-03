@@ -286,15 +286,14 @@ static double mu_timer_cpu( )
 	FILETIME exitTime;
 	FILETIME kernelTime;
 	FILETIME userTime;
+
+	/* This approach has a resolution of 1/64 second. Unfortunately, Windows' API does not offer better */
 	if ( GetProcessTimes( GetCurrentProcess( ),
-		&createTime, &exitTime, &kernelTime, &userTime ) != -1 )
+		&createTime, &exitTime, &kernelTime, &userTime ) != 0 )
 	{
-		SYSTEMTIME userSystemTime;
-		if ( FileTimeToSystemTime( &userTime, &userSystemTime ) != -1 )
-			return (double)userSystemTime.wHour * 3600.0 +
-				(double)userSystemTime.wMinute * 60.0 +
-				(double)userSystemTime.wSecond +
-				(double)userSystemTime.wMilliseconds / 1000.0;
+		ULARGE_INTEGER userSystemTime;
+		memcpy(&userSystemTime, &userTime, sizeof(ULARGE_INTEGER));
+		return (double)userSystemTime.QuadPart / 10000000.0;
 	}
 
 #elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
