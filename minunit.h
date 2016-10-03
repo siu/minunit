@@ -208,17 +208,17 @@ static void (*minunit_teardown)() = NULL;
 static double mu_timer_real( )
 {
 #if defined(_WIN32)
-	FILETIME tm;
-	ULONGLONG t;
-#if defined(NTDDI_WIN8) && NTDDI_VERSION >= NTDDI_WIN8
-	/* Windows 8, Windows Server 2012 and later. ---------------- */
-	GetSystemTimePreciseAsFileTime( &tm );
-#else
 	/* Windows 2000 and later. ---------------------------------- */
-	GetSystemTimeAsFileTime( &tm );
-#endif
-	t = ((ULONGLONG)tm.dwHighDateTime << 32) | (ULONGLONG)tm.dwLowDateTime;
-	return (double)t / 10000000.0;
+	LARGE_INTEGER Time;
+	LARGE_INTEGER Frequency;
+	
+	QueryPerformanceFrequency(&Frequency);
+	QueryPerformanceCounter(&Time);
+	
+	Time.QuadPart *= 1000000;
+	Time.QuadPart /= Frequency.QuadPart;
+	
+	return (double)Time.QuadPart / 1000000.0;
 
 #elif (defined(__hpux) || defined(hpux)) || ((defined(__sun__) || defined(__sun) || defined(sun)) && (defined(__SVR4) || defined(__svr4__)))
 	/* HP-UX, Solaris. ------------------------------------------ */
