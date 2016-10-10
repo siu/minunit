@@ -77,8 +77,8 @@ static double minunit_proc_timer = 0;
 static char minunit_last_message[MINUNIT_MESSAGE_LEN];
 
 /*  Test setup and teardown function pointers */
-static void (*minunit_setup)(void) = NULL;
-static void (*minunit_teardown)(void) = NULL;
+static void (*minunit_setup)() = NULL;
+static void (*minunit_teardown)() = NULL;
 
 /*  Definitions */
 #define MU_TEST(method_name) static void method_name()
