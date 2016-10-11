@@ -30,7 +30,9 @@
 #if defined(_WIN32)
 #include <Windows.h>
 #define __func__ __FUNCTION__
-#define snprintf _snprintf
+#if defined(_MSC_VER) && _MSC_VER < 1900
+  #define snprintf _snprintf
+#endif
 
 #elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
 
