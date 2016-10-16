@@ -69,7 +69,7 @@ equal or show their values as the error message
 
 mu_assert_double_eq(expected, result): it will pass if the two values
 are almost equal or show their values as the error message. The value of
-MINUNIT_EPSILON sets the threshold to determine if the values are close enough.
+MINUNIT_RELEVANT_DIGITS sets the threshold to determine if the values are close enough.
 
 ## Authors
 
