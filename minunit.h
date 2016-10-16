@@ -62,10 +62,9 @@
 
 /*  Maximum length of last message */
 #define MINUNIT_MESSAGE_LEN 1024
-/*  Accuracy with which floats are compared ( threshold is 10^(-MINUNIT_EPSILON) ) */
-#define MINUNIT_EPSILON 12
-/* Avoid use of pow() function */
-#define PMIN10(X) (1e##-X)
+/*  Accuracy with which floats are compared */
+#define MINUNIT_RELEVANT_DIGITS 12
+#define MINUNIT_EPSILON (1E-MINUNIT_RELEVANT_DIGITS)
 
 /*  Misc. counters */
 static int minunit_run = 0;
@@ -187,8 +186,8 @@ static void (*minunit_teardown)() = NULL;
 	minunit_assert++;\
 	minunit_tmp_e = (expected);\
 	minunit_tmp_r = (result);\
-	if (fabs(minunit_tmp_e-minunit_tmp_r) > PMIN10(MINUNIT_EPSILON)) {\
-		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %.*g expected but was %.*g", __func__, __FILE__, __LINE__, MINUNIT_EPSILON, minunit_tmp_e, MINUNIT_EPSILON, minunit_tmp_r);\
+	if (fabs(minunit_tmp_e-minunit_tmp_r) > MINUNIT_EPSILON) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: %.*g expected but was %.*g", __func__, __FILE__, __LINE__, MINUNIT_RELEVANT_DIGITS, minunit_tmp_e, MINUNIT_RELEVANT_DIGITS, minunit_tmp_r);\
 		minunit_status = 1;\
 		return;\
 	} else {\
