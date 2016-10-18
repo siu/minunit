@@ -10,7 +10,7 @@ void test_setup() {
 }
 
 void test_teardown() {
-	// Nothing
+	/* Nothing */
 }
 
 MU_TEST(test_check) {
