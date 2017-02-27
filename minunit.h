@@ -192,18 +192,14 @@ static void (*minunit_teardown)(void) = NULL;
 )
 
 #define mu_assert_string_eq(expected, result) MU__SAFE_BLOCK(\
-	const char* minunit_tmp_e;\
-	const char* minunit_tmp_r;\
+	const char* minunit_tmp_e = expected;\
+	const char* minunit_tmp_r = result;\
 	minunit_assert++;\
-	if (!expected) {\
+	if (!minunit_tmp_e) {\
 		minunit_tmp_e = "<null pointer>";\
-	} else {\
-		minunit_tmp_e = (expected);\
 	}\
-	if (!result) {\
+	if (!minunit_tmp_r) {\
 		minunit_tmp_r = "<null pointer>";\
-	} else {\
-		minunit_tmp_r = (result);\
 	}\
 	if(strcmp(minunit_tmp_e, minunit_tmp_r)) {\
 		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: '%s' expected but was '%s'", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\

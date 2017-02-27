@@ -3,6 +3,7 @@
 static int foo = 0;
 static int bar = 0;
 static double dbar = 0.1;
+static const char* foostring = "Thisstring";
 
 void test_setup() {
 	foo = 7;
@@ -49,6 +50,14 @@ MU_TEST(test_fail) {
 	mu_fail("Fail now!");
 }
 
+MU_TEST(test_string_eq){
+	mu_assert_string_eq("Thisstring", foostring);
+}
+
+MU_TEST(test_string_eq_fail){
+	mu_assert_string_eq("Thatstring", foostring);
+}
+
 
 MU_TEST_SUITE(test_suite) {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -62,6 +71,9 @@ MU_TEST_SUITE(test_suite) {
 	MU_RUN_TEST(test_assert_fail);
 	MU_RUN_TEST(test_assert_int_eq_fail);
 	MU_RUN_TEST(test_assert_double_eq_fail);
+	
+	MU_RUN_TEST(test_string_eq);
+	MU_RUN_TEST(test_string_eq_fail);
 
 	MU_RUN_TEST(test_fail);
 }
