@@ -80,12 +80,12 @@ static double minunit_proc_timer = 0;
 static char minunit_last_message[MINUNIT_MESSAGE_LEN];
 
 /*  Test setup and teardown function pointers */
-static void (*minunit_setup)() = NULL;
-static void (*minunit_teardown)() = NULL;
+static void (*minunit_setup)(void) = NULL;
+static void (*minunit_teardown)(void) = NULL;
 
 /*  Definitions */
-#define MU_TEST(method_name) static void method_name()
-#define MU_TEST_SUITE(suite_name) static void suite_name()
+#define MU_TEST(method_name) static void method_name(void)
+#define MU_TEST_SUITE(suite_name) static void suite_name(void)
 
 #define MU__SAFE_BLOCK(block) do {\
 	block\
@@ -228,7 +228,7 @@ static void (*minunit_teardown)() = NULL;
  * The returned real time is only useful for computing an elapsed time
  * between two calls to this function.
  */
-static double mu_timer_real( )
+static double mu_timer_real(void)
 {
 #if defined(_WIN32)
 	/* Windows 2000 and later. ---------------------------------- */
@@ -303,7 +303,7 @@ static double mu_timer_real( )
  * Returns the amount of CPU time used by the current process,
  * in seconds, or -1.0 if an error occurred.
  */
-static double mu_timer_cpu( )
+static double mu_timer_cpu(void)
 {
 #if defined(_WIN32)
 	/* Windows -------------------------------------------------- */
