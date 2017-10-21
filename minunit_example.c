@@ -5,12 +5,12 @@ static int bar = 0;
 static double dbar = 0.1;
 static const char* foostring = "Thisstring";
 
-void test_setup() {
+void test_setup(void) {
 	foo = 7;
 	bar = 4;
 }
 
-void test_teardown() {
+void test_teardown(void) {
 	/* Nothing */
 }
 
