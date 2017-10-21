@@ -262,6 +262,7 @@ static double mu_timer_real(void)
 
 #elif defined(_POSIX_VERSION)
 	/* POSIX. --------------------------------------------------- */
+	struct timeval tm;
 #if defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
 	{
 		struct timespec ts;
@@ -291,7 +292,6 @@ static double mu_timer_real(void)
 #endif /* _POSIX_TIMERS */
 
 	/* AIX, BSD, Cygwin, HP-UX, Linux, OSX, POSIX, Solaris. ----- */
-	struct timeval tm;
 	gettimeofday( &tm, NULL );
 	return (double)tm.tv_sec + (double)tm.tv_usec / 1000000.0;
 #else
