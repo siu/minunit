@@ -26,7 +26,7 @@ This is a minimal test suite written with minunit:
 	int main(int argc, char *argv[]) {
 		MU_RUN_SUITE(test_suite);
 		MU_REPORT();
-		return 0;
+		return minunit_status;
 	}
 
 Which will produce the following output:
