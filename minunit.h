@@ -30,8 +30,8 @@
 #if defined(_WIN32)
 #include <Windows.h>
 #if defined(_MSC_VER) && _MSC_VER < 1900
-  #define snprintf _snprintf
-  #define __func__ __FUNCTION__
+	#define snprintf _snprintf
+	#define __func__ __FUNCTION__
 #endif
 
 #elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
@@ -73,8 +73,8 @@ static int minunit_fail = 0;
 static int minunit_status = 0;
 
 /*  Timers */
-static double minunit_real_timer = 0;
-static double minunit_proc_timer = 0;
+static double minunit_real_timer = 0.0;
+static double minunit_proc_timer = 0.0;
 
 /*  Last message */
 static char minunit_last_message[MINUNIT_MESSAGE_LEN];
@@ -82,6 +82,9 @@ static char minunit_last_message[MINUNIT_MESSAGE_LEN];
 /*  Test setup and teardown function pointers */
 static void (*minunit_setup)(void) = NULL;
 static void (*minunit_teardown)(void) = NULL;
+
+/*  Flags */
+static int minunit_show_progress = 1;
 
 /*  Definitions */
 #define MU_TEST(method_name) static void method_name(void)
@@ -102,6 +105,19 @@ static void (*minunit_teardown)(void) = NULL;
 #define MU_SUITE_CONFIGURE(setup_fun, teardown_fun) MU__SAFE_BLOCK(\
 	minunit_setup = setup_fun;\
 	minunit_teardown = teardown_fun;\
+)
+
+#define MU_SUITE_RESET() MU__SAFE_BLOCK(\
+	minunit_run = 0;\
+	minunit_assert = 0;\
+	minunit_fail = 0;\
+	minunit_status = 0;\
+	minunit_real_timer = 0.0;\
+	minunit_proc_timer = 0.0;\
+)
+
+#define MU_SUITE_CONFIGURE_SHOW_PROGRESS(int_val) MU__SAFE_BLOCK(\
+	minunit_show_progress = int_val;\
 )
 
 /*  Test runner */
@@ -143,7 +159,9 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		if (minunit_show_progress != 0) {\
+			printf(".");\
+		}\
 	}\
 )
 
@@ -161,7 +179,9 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		if (minunit_show_progress != 0) {\
+			printf(".");\
+		}\
 	}\
 )
 
@@ -176,7 +196,9 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		if (minunit_show_progress != 0) {\
+			printf(".");\
+		}\
 	}\
 )
 
@@ -192,7 +214,9 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		if (minunit_show_progress != 0) {\
+			printf(".");\
+		}\
 	}\
 )
 
@@ -211,7 +235,9 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_status = 1;\
 		return;\
 	} else {\
-		printf(".");\
+		if (minunit_show_progress != 0) {\
+			printf(".");\
+		}\
 	}\
 )
 

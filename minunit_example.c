@@ -58,6 +58,11 @@ MU_TEST(test_string_eq_fail){
 	mu_assert_string_eq("Thatstring", foostring);
 }
 
+MU_TEST(test_fail_multiple) {
+	for ( int i = 0 ; i < 10000 ; i++ ) {
+		mu_fail("Fail now!");
+	}
+}
 
 MU_TEST_SUITE(test_suite) {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -78,9 +83,19 @@ MU_TEST_SUITE(test_suite) {
 	MU_RUN_TEST(test_fail);
 }
 
+MU_TEST_SUITE(test_suite_silent) {
+	MU_RUN_TEST(test_fail_multiple);
+}
+
 int main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
+
+	MU_SUITE_RESET();
+	MU_SUITE_CONFIGURE_SHOW_PROGRESS(0);
+	MU_RUN_SUITE(test_suite_silent);
+	MU_REPORT();
+
 	return 0;
 }
 
