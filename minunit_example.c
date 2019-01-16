@@ -59,7 +59,8 @@ MU_TEST(test_string_eq_fail){
 }
 
 MU_TEST(test_fail_multiple) {
-	for ( int i = 0 ; i < 10000 ; i++ ) {
+  int i;
+	for ( i = 0 ; i < 10000 ; i++ ) {
 		mu_fail("Fail now!");
 	}
 }
