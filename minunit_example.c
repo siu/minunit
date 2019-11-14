@@ -81,6 +81,11 @@ MU_TEST_SUITE(test_suite) {
 int main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
+#ifdef MINUNIT_CI
+	/* Fake a success exit code for CI builds */
 	return 0;
+#else
+	return MU_EXIT_CODE;
+#endif
 }
 

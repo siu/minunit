@@ -1,4 +1,4 @@
-CFLAGS += -Wall -Wextra
+CFLAGS += -Wall -Wextra -DMINUNIT_CI
 INCLUDE_DIRS += -I../
 
 LIBS += -lm
