@@ -54,6 +54,10 @@
 #include <mach/mach_time.h>
 #endif
 
+#if __GNUC__ >= 5 && !defined(__STDC_VERSION__)
+#define __func__ __extension__ __FUNCTION__
+#endif
+
 #else
 #error "Unable to define timers for an unknown OS."
 #endif
