@@ -20,8 +20,8 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef __MINUNIT_H__
-#define __MINUNIT_H__
+#ifndef MINUNIT_MINUNIT_H
+#define MINUNIT_MINUNIT_H
 
 #ifdef __cplusplus
 	extern "C" {
@@ -80,12 +80,12 @@ static double minunit_proc_timer = 0;
 static char minunit_last_message[MINUNIT_MESSAGE_LEN];
 
 /*  Test setup and teardown function pointers */
-static void (*minunit_setup)() = NULL;
-static void (*minunit_teardown)() = NULL;
+static void (*minunit_setup)(void) = NULL;
+static void (*minunit_teardown)(void) = NULL;
 
 /*  Definitions */
-#define MU_TEST(method_name) static void method_name()
-#define MU_TEST_SUITE(suite_name) static void suite_name()
+#define MU_TEST(method_name) static void method_name(void)
+#define MU_TEST_SUITE(suite_name) static void suite_name(void)
 
 #define MU__SAFE_BLOCK(block) do {\
 	block\
@@ -228,7 +228,7 @@ static void (*minunit_teardown)() = NULL;
  * The returned real time is only useful for computing an elapsed time
  * between two calls to this function.
  */
-static double mu_timer_real( )
+static double mu_timer_real(void)
 {
 #if defined(_WIN32)
 	/* Windows 2000 and later. ---------------------------------- */
@@ -262,6 +262,7 @@ static double mu_timer_real( )
 
 #elif defined(_POSIX_VERSION)
 	/* POSIX. --------------------------------------------------- */
+	struct timeval tm;
 #if defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
 	{
 		struct timespec ts;
@@ -291,7 +292,6 @@ static double mu_timer_real( )
 #endif /* _POSIX_TIMERS */
 
 	/* AIX, BSD, Cygwin, HP-UX, Linux, OSX, POSIX, Solaris. ----- */
-	struct timeval tm;
 	gettimeofday( &tm, NULL );
 	return (double)tm.tv_sec + (double)tm.tv_usec / 1000000.0;
 #else
@@ -303,7 +303,7 @@ static double mu_timer_real( )
  * Returns the amount of CPU time used by the current process,
  * in seconds, or -1.0 if an error occurred.
  */
-static double mu_timer_cpu( )
+static double mu_timer_cpu(void)
 {
 #if defined(_WIN32)
 	/* Windows -------------------------------------------------- */
@@ -383,4 +383,4 @@ static double mu_timer_cpu( )
 }
 #endif
 
-#endif /* __MINUNIT_H__ */
+#endif /* MINUNIT_MINUNIT_H */
