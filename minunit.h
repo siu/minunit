@@ -54,6 +54,10 @@
 #include <mach/mach_time.h>
 #endif
 
+#if __GNUC__ >= 5 && !defined(__STDC_VERSION__)
+#define __func__ __extension__ __FUNCTION__
+#endif
+
 #else
 #error "Unable to define timers for an unknown OS."
 #endif
@@ -134,6 +138,7 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_end_real_timer - minunit_real_timer,\
 		minunit_end_proc_timer - minunit_proc_timer);\
 )
+#define MU_EXIT_CODE minunit_fail
 
 /*  Assertions */
 #define mu_check(test) MU__SAFE_BLOCK(\
