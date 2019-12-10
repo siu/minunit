@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-expected_exit_code=6
+expected_exit_code=7
 ./minunit_example
 if [ $? -ne $expected_exit_code ]; then
   echo "Unexpected exit code: $expected_exit_code expected but was $?"

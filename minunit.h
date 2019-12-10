@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012 David Siñuela Pastor, siu.4coders@gmail.com
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -185,6 +185,34 @@ static void (*minunit_teardown)(void) = NULL;
 	}\
 )
 
+#define mu_assert_int_in(expected, array_length, result) MU__SAFE_BLOCK(\
+	int minunit_tmp_r;\
+	minunit_assert++;\
+	minunit_tmp_r = (result);\
+	int t = 0;\
+	int i;\
+	for (i = 0; i < array_length; i++) {\
+		if (expected[i] == minunit_tmp_r)\
+			t = 1;\
+	}\
+	if (t == 0) {\
+		char tmp[1024] = {0};\
+		tmp[0] = '[';\
+		for (i = 0; i < array_length; i++) {\
+			sprintf(tmp + strlen(tmp), "%d, ", expected[i]);\
+		}\
+		int len = strlen(tmp);\
+		tmp[len - 2] = ']';\
+		tmp[len - 1] = '\0';\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: expected to be one of %s but was %d", __func__, __FILE__, __LINE__, tmp, minunit_tmp_r);\
+		minunit_status = 1;\
+		return;\
+	} else {\
+		printf(".");\
+	}\
+)
+
+
 #define mu_assert_double_eq(expected, result) MU__SAFE_BLOCK(\
 	double minunit_tmp_e;\
 	double minunit_tmp_r;\
@@ -239,13 +267,13 @@ static double mu_timer_real(void)
 	/* Windows 2000 and later. ---------------------------------- */
 	LARGE_INTEGER Time;
 	LARGE_INTEGER Frequency;
-	
+
 	QueryPerformanceFrequency(&Frequency);
 	QueryPerformanceCounter(&Time);
-	
+
 	Time.QuadPart *= 1000000;
 	Time.QuadPart /= Frequency.QuadPart;
-	
+
 	return (double)Time.QuadPart / 1000000.0;
 
 #elif (defined(__hpux) || defined(hpux)) || ((defined(__sun__) || defined(__sun) || defined(sun)) && (defined(__SVR4) || defined(__svr4__)))

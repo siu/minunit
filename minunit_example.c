@@ -38,6 +38,16 @@ MU_TEST(test_assert_int_eq_fail) {
 	mu_assert_int_eq(5, bar);
 }
 
+MU_TEST(test_assert_int_in) {
+	int vals[] = {0, 1, 2, 3, 4};
+	mu_assert_int_in(vals, 5, bar);
+}
+
+MU_TEST(test_assert_int_in_fail) {
+	int vals[] = {0, 1, 2, 3, 4};
+	mu_assert_int_in(vals, 5, foo);
+}
+
 MU_TEST(test_assert_double_eq) {
 	mu_assert_double_eq(0.1, dbar);
 }
@@ -65,22 +75,23 @@ MU_TEST_SUITE(test_suite) {
 	MU_RUN_TEST(test_check);
 	MU_RUN_TEST(test_assert);
 	MU_RUN_TEST(test_assert_int_eq);
+	MU_RUN_TEST(test_assert_int_in);
 	MU_RUN_TEST(test_assert_double_eq);
 
 	MU_RUN_TEST(test_check_fail);
 	MU_RUN_TEST(test_assert_fail);
 	MU_RUN_TEST(test_assert_int_eq_fail);
+	MU_RUN_TEST(test_assert_int_in_fail);
 	MU_RUN_TEST(test_assert_double_eq_fail);
-	
+
 	MU_RUN_TEST(test_string_eq);
 	MU_RUN_TEST(test_string_eq_fail);
 
 	MU_RUN_TEST(test_fail);
 }
 
-int main(int argc, char *argv[]) {
+int main() {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;
 }
-

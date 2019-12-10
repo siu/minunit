@@ -13,7 +13,7 @@ http://www.jera.com/techinfo/jtns/jtn002.html
 ## How to use it
 
 This is a minimal test suite written with minunit:
-
+``` c
 	#include "minunit.h"
 
 	MU_TEST(test_check) {
@@ -28,9 +28,10 @@ This is a minimal test suite written with minunit:
 		MU_REPORT();
 		return MU_EXIT_CODE;
 	}
+```
 
 Which will produce the following output:
-
+```
 	F
 	test_check failed:
 		readme_sample.c:4: 5 == 7
@@ -39,13 +40,13 @@ Which will produce the following output:
 	1 tests, 1 assertions, 1 failures
 
 	Finished in 0.00032524 seconds (real) 0.00017998 seconds (proc)
-
+```
 Check out minunit_example.c to see a complete example. Compile with something
 like:
 
 	gcc minunit_example.c -lrt -lm -o minunit_example
 
-Don't forget to add -lrt for the timer and -lm for linking the function fabs
+Don't forget to add `-lrt` for the timer and `-lm` for linking the function fabs
 used in mu_assert_double_eq.
 
 ## Setup and teardown functions
@@ -56,20 +57,27 @@ declaration.
 
 ## Assertion types
 
-mu_check(condition): will pass if the condition is evaluated to true, otherwise
-it will show the condition as the error message
+**mu_check(condition)**: will pass if the condition is evaluated to true,
+otherwise it will show the condition as the error message
 
-mu_fail(message): will fail and show the message
+**mu_fail(message)**: will fail and show the message
 
-mu_assert(condition, message): will pass if the condition is true, otherwise it
-will show the failed condition and the message
+**mu_assert(condition, message)**: will pass if the condition is true, otherwise
+it will show the failed condition and the message
 
-mu_assert_int_eq(expected, result): it will pass if the two numbers are
+**mu_assert_int_eq(expected, result)**: it will pass if the two numbers are
 equal or show their values as the error message
 
-mu_assert_double_eq(expected, result): it will pass if the two values
+**mu_assert_double_eq(expected, result)**: it will pass if the two values
 are almost equal or show their values as the error message. The value of
 MINUNIT_EPSILON sets the threshold to determine if the values are close enough.
+
+**mu_assert_string_eq(expected, result)**: it will pass if the two values are
+the same (case sensitive) or show the values as the error message
+
+**mu_assert_int_in(expected, array_size, result)**: it will pass if result
+equals any value in the expected list or show the possible results and the
+actual result as the error message
 
 ## Authors
 
