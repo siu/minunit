@@ -56,20 +56,26 @@ declaration.
 
 ## Assertion types
 
-mu_check(condition): will pass if the condition is evaluated to true, otherwise
+**mu_check(condition)** and **mu_check_step(condition, step)**: will pass if the condition is evaluated to true, otherwise
 it will show the condition as the error message
 
-mu_fail(message): will fail and show the message
+ will pass if the condition is evaluated to true, otherwise
+it will show the condition as the error message
 
-mu_assert(condition, message): will pass if the condition is true, otherwise it
+**mu_fail(message)** and **mu_fail(message, step)**: will fail and show the message
+
+**mu_assert(condition, message)** and **mu_assert(condition, message, step)**: will pass if the condition is true, otherwise it
 will show the failed condition and the message
 
-mu_assert_int_eq(expected, result): it will pass if the two numbers are
+**mu_assert_int_eq(expected, result)** and **mu_assert_int_eq_step(expected, result, step)**: it will pass if the two numbers are
 equal or show their values as the error message
 
-mu_assert_double_eq(expected, result): it will pass if the two values
+**mu_assert_double_eq(expected, result)** and **mu_assert_double_eq_step(expected, result, step)**: it will pass if the two values
 are almost equal or show their values as the error message. The value of
 MINUNIT_EPSILON sets the threshold to determine if the values are close enough.
+
+**mu_assert_string_eq(expected, result)** and **mu_assert_string_eq_step(expected, result, step)**: it will pass if the strings are
+equal (check with strcmp) or show their values as the error message
 
 ## Authors
 
