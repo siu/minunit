@@ -89,6 +89,7 @@ static void (*minunit_teardown)(void) = NULL;
 
 /*  Definitions */
 #define MU_TEST(method_name) static void method_name(void)
+#define MU_TEST_STEP(method_name, _p) static void method_name(_p param)
 #define MU_TEST_SUITE(suite_name) static void suite_name(void)
 
 #define MU__SAFE_BLOCK(block) do {\
@@ -126,6 +127,24 @@ static void (*minunit_teardown)(void) = NULL;
 	if (minunit_teardown) (*minunit_teardown)();\
 )
 
+/*  Test runner */
+#define MU_RUN_TEST_STEP(test, param) MU__SAFE_BLOCK(\
+	if (minunit_real_timer==0 && minunit_proc_timer==0) {\
+		minunit_real_timer = mu_timer_real();\
+		minunit_proc_timer = mu_timer_cpu();\
+	}\
+	if (minunit_setup) (*minunit_setup)();\
+	minunit_status = 0;\
+	test(param);\
+	minunit_run++;\
+	if (minunit_status) {\
+		minunit_fail++;\
+		printf("\n%s\n", minunit_last_message);\
+	}\
+	fflush(stdout);\
+	if (minunit_teardown) (*minunit_teardown)();\
+)
+
 /*  Report */
 #define MU_REPORT() MU__SAFE_BLOCK(\
 	double minunit_end_real_timer;\
@@ -149,9 +168,25 @@ static void (*minunit_teardown)(void) = NULL;
 	}\
 )
 
+#define mu_check_step(test, step) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	if (!(test)) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "[ FAILED ] %s :\n\t%s:%d: (%s) %s", __func__, __FILE__, __LINE__, step, #test);\
+		minunit_status = 1;\
+		return;\
+	}\
+)
+
 #define mu_fail(message) MU__SAFE_BLOCK(\
 	minunit_assert++;\
 	snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "[ FAILED ] %s:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
+	minunit_status = 1;\
+	return;\
+)
+
+#define mu_fail_step(message, step) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "[ FAILED ] %s:\n\t%s:%d: (%s) %s", __func__, __FILE__, __LINE__, step, message);\
 	minunit_status = 1;\
 	return;\
 )
@@ -160,6 +195,15 @@ static void (*minunit_teardown)(void) = NULL;
 	minunit_assert++;\
 	if (!(test)) {\
 		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "[ FAILED ] %s:\n\t%s:%d: %s", __func__, __FILE__, __LINE__, message);\
+		minunit_status = 1;\
+		return;\
+	}\
+)
+
+#define mu_assert_step(test, message, step) MU__SAFE_BLOCK(\
+	minunit_assert++;\
+	if (!(test)) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "[ FAILED ] %s:\n\t%s:%d: (%s) %s", __func__, __FILE__, __LINE__, step, message);\
 		minunit_status = 1;\
 		return;\
 	}\
@@ -178,6 +222,20 @@ static void (*minunit_teardown)(void) = NULL;
 	}\
 )
 
+#define mu_assert_int_eq_step(expected, result, step) MU__SAFE_BLOCK(\
+	int minunit_tmp_e;\
+	int minunit_tmp_r;\
+	minunit_assert++;\
+	minunit_tmp_e = (expected);\
+	minunit_tmp_r = (result);\
+	if (minunit_tmp_e != minunit_tmp_r) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "[ FAILED ] %s:\n\t%s:%d: (%s) %d expected but was %d", __func__,  __FILE__, __LINE__, step, minunit_tmp_e, minunit_tmp_r);\
+		minunit_status = 1;\
+		return;\
+	}\
+)
+
+
 #define mu_assert_double_eq(expected, result) MU__SAFE_BLOCK(\
 	double minunit_tmp_e;\
 	double minunit_tmp_r;\
@@ -191,6 +249,21 @@ static void (*minunit_teardown)(void) = NULL;
 		return;\
 	}\
 )
+
+#define mu_assert_double_eq_step(expected, result, step) MU__SAFE_BLOCK(\
+	double minunit_tmp_e;\
+	double minunit_tmp_r;\
+	minunit_assert++;\
+	minunit_tmp_e = (expected);\
+	minunit_tmp_r = (result);\
+	if (fabs(minunit_tmp_e-minunit_tmp_r) > MINUNIT_EPSILON) {\
+		int minunit_significant_figures = 1 - log10(MINUNIT_EPSILON);\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "[ FAILED ] %s:\n\t%s:%d: (%s) %.*g expected but was %.*g", __func__, __FILE__, __LINE__, step, minunit_significant_figures, minunit_tmp_e, minunit_significant_figures, minunit_tmp_r);\
+		minunit_status = 1;\
+		return;\
+	}\
+)
+
 
 #define mu_assert_string_eq(expected, result) MU__SAFE_BLOCK(\
 	const char* minunit_tmp_e = expected;\
@@ -208,6 +281,24 @@ static void (*minunit_teardown)(void) = NULL;
 		return;\
 	}\
 )
+
+#define mu_assert_string_eq_step(expected, result, step) MU__SAFE_BLOCK(\
+	const char* minunit_tmp_e = expected;\
+	const char* minunit_tmp_r = result;\
+	minunit_assert++;\
+	if (!minunit_tmp_e) {\
+		minunit_tmp_e = "<null pointer>";\
+	}\
+	if (!minunit_tmp_r) {\
+		minunit_tmp_r = "<null pointer>";\
+	}\
+	if(strcmp(minunit_tmp_e, minunit_tmp_r)) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "[ FAILED ] %s:\n\t%s:%d: (%s) '%s' expected but was '%s'", __func__, __FILE__, __LINE__, step, minunit_tmp_e, minunit_tmp_r);\
+		minunit_status = 1;\
+		return;\
+	}\
+)
+
 
 /*
  * The following two functions were written by David Robert Nadeau

@@ -14,6 +14,29 @@ void test_teardown(void) {
 	/* Nothing */
 }
 
+MU_TEST_STEP(test_fail_step, char*) {
+	mu_fail_step("fail", param);
+}
+MU_TEST_STEP(test_check_step, char*) {
+	mu_check_step(foo != 7, param);
+}
+
+MU_TEST_STEP(test_assert_step, char*) {
+	mu_assert_step(foo != 7, "foo should be <> 7", param);
+}
+
+MU_TEST_STEP(test_assert_int_step, char*) {
+	mu_assert_int_eq_step(4, foo, param);
+}
+
+MU_TEST_STEP(test_assert_double_step, char *) {
+	mu_assert_double_eq_step(0.2, dbar, param);
+}
+
+MU_TEST_STEP(test_string_eq_step, char*){
+	mu_assert_string_eq_step("Thatstring", foostring, param);
+}
+
 MU_TEST(test_check) {
 	mu_check(foo == 7);
 }
@@ -60,6 +83,9 @@ MU_TEST(test_string_eq_fail){
 
 
 MU_TEST_SUITE(test_suite) {
+	int i, n = 2;
+	char *steps[] = { "step 1", "step 2" };
+
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
 	MU_RUN_TEST(test_check);
@@ -76,6 +102,15 @@ MU_TEST_SUITE(test_suite) {
 	MU_RUN_TEST(test_string_eq_fail);
 
 	MU_RUN_TEST(test_fail);
+
+	for (i = 0; i < n; i++) {
+		MU_RUN_TEST_STEP(test_fail_step, steps[i]);
+		MU_RUN_TEST_STEP(test_check_step, steps[i]);
+		MU_RUN_TEST_STEP(test_assert_step, steps[i]);
+		MU_RUN_TEST_STEP(test_assert_int_step, steps[i]);
+		MU_RUN_TEST_STEP(test_assert_double_step, steps[i]);
+		MU_RUN_TEST_STEP(test_string_eq_step, steps[i]);
+	}
 }
 
 int main(int argc, char *argv[]) {

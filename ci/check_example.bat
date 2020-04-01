@@ -1,5 +1,5 @@
 @echo off
-set expected_exit_code=6
+set expected_exit_code=18
 minunit_example
 IF NOT %errorlevel% == %expected_exit_code% (
   echo Unexpected exit code: %expected_exit_code% expected but was %errorlevel%
