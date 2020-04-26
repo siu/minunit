@@ -70,11 +70,15 @@
 /*  Accuracy with which floats are compared */
 #define MINUNIT_EPSILON 1E-12
 
+typedef enum {false, true} bool;
+
 /*  Misc. counters */
 static int minunit_run = 0;
 static int minunit_assert = 0;
 static int minunit_fail = 0;
 static int minunit_status = 0;
+static int assert_fail = 0;
+bool all_passed = true;
 
 /*  Timers */
 static double minunit_real_timer = 0;
@@ -120,6 +124,8 @@ static void (*minunit_teardown)(void) = NULL;
 	minunit_run++;\
 	if (minunit_status) {\
 		minunit_fail++;\
+		assert_fail++;\
+		all_passed = false;\
 		printf("F");\
 		printf("\n%s\n", minunit_last_message);\
 	}\
@@ -131,7 +137,17 @@ static void (*minunit_teardown)(void) = NULL;
 #define MU_REPORT() MU__SAFE_BLOCK(\
 	double minunit_end_real_timer;\
 	double minunit_end_proc_timer;\
-	printf("\n\n%d tests, %d assertions, %d failures\n", minunit_run, minunit_assert, minunit_fail);\
+	printf("\n\E[1;33m=========================================================\E[00m\n");\
+	if(all_passed) {\
+		printf("\E[0;36m[minunit]\E[00m test cases:\t%d %3s \E[0;32m\t%d passed\E[00m %3s \t%d failed\n", minunit_run, "|", (minunit_run-minunit_fail), "|", minunit_fail);\
+		printf("\E[0;36m[minunit]\E[00m assertions:\t%d %3s \E[0;32m\t%d passed\E[00m %3s \t%d failed\n", minunit_assert, "|",(minunit_assert-assert_fail), "|",assert_fail);\
+		printf("\E[0;36m[minunit]\E[00m Status: \E[0;32mSUCCESS!\E[00m\n");\
+	} else {\
+		printf("\E[0;36m[minunit]\E[00m test cases:\t%d %3s \t%d passed %3s \E[1;31m\t%d failed\E[00m\n", minunit_run, "|", (minunit_run-minunit_fail), "|", minunit_fail);\
+		printf("\E[0;36m[minunit]\E[00m assertions:\t%d %3s \t%d passed %3s \E[1;31m\t%d failed\E[00m\n", minunit_assert, "|", (minunit_assert-assert_fail), "|", assert_fail);\
+		printf("\E[0;36m[minunit]\E[00m Status: \E[1;31mFAILURE!\E[00m\n");\
+	}\
+	printf("\E[1;33m=========================================================\E[00m\n");\
 	minunit_end_real_timer = mu_timer_real();\
 	minunit_end_proc_timer = mu_timer_cpu();\
 	printf("\nFinished in %.8f seconds (real) %.8f seconds (proc)\n\n",\
@@ -389,3 +405,5 @@ static double mu_timer_cpu(void)
 #endif
 
 #endif /* MINUNIT_MINUNIT_H */
+
+
