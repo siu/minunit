@@ -170,6 +170,27 @@ static void (*minunit_teardown)(void) = NULL;
 	}\
 )
 
+#define mu_assert_long_eq_msg(expected, result, msg, ...) MU__SAFE_BLOCK(\
+	long minunit_tmp_e;\
+	long minunit_tmp_r;\
+	minunit_assert++;\
+	minunit_tmp_e = (expected);\
+	minunit_tmp_r = (result);\
+	if (minunit_tmp_e != minunit_tmp_r) {\
+		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, \
+			 "%s failed:\n\t%s:%d: %ld expected but was %ld" msg, \
+			 __func__, __FILE__, __LINE__, \
+			 minunit_tmp_e, minunit_tmp_r, ##__VA_ARGS__);\
+		minunit_status = 1;\
+		return;\
+	} else {\
+		printf(".");\
+	}\
+)
+
+#define mu_assert_long_eq(expected, result) \
+	mu_assert_long_eq_msg(expected, result, "")
+
 #define mu_assert_int_eq(expected, result) MU__SAFE_BLOCK(\
 	int minunit_tmp_e;\
 	int minunit_tmp_r;\
