@@ -77,6 +77,8 @@ equal or show their values as the error message
 are almost equal or show their values as the error message. The value of
 `MINUNIT_EPSILON` sets the threshold to determine if the values are close enough.
 
+`mu_assert_string_eq(expected, resurt):` it will pass if the two strings are equal.
+
 ## Authors
 
 David Siñuela Pastor <siu.4coders@gmail.com>
