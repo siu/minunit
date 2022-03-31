@@ -108,23 +108,47 @@ static void (*minunit_teardown)(void) = NULL;
 	minunit_teardown = teardown_fun;\
 )
 
-/*  Test runner */
-#define MU_RUN_TEST(test) MU__SAFE_BLOCK(\
+#define MU_SETUP_TIMER MU__SAFE_BLOCK(\
 	if (minunit_real_timer==0 && minunit_proc_timer==0) {\
 		minunit_real_timer = mu_timer_real();\
 		minunit_proc_timer = mu_timer_cpu();\
 	}\
-	if (minunit_setup) (*minunit_setup)();\
-	minunit_status = 0;\
-	test();\
-	minunit_run++;\
+)
+
+#define MU_CHECK_AND_FAIL MU__SAFE_BLOCK(\
 	if (minunit_status) {\
 		minunit_fail++;\
 		printf("F");\
 		printf("\n%s\n", minunit_last_message);\
 	}\
+)
+
+/*  Test runner */
+#define MU_RUN_TEST(test) MU__SAFE_BLOCK(\
+	MU_SETUP_TIMER;\
+	if (minunit_setup) (*minunit_setup)();\
+	minunit_status = 0;\
+	test();\
+	minunit_run++;\
+	MU_CHECK_AND_FAIL;\
 	fflush(stdout);\
 	if (minunit_teardown) (*minunit_teardown)();\
+)
+
+/* Parameterized test runner */
+#define MU_RUN_TEST_PARAMETERIZED(test, name, values) MU__SAFE_BLOCK(\
+	unsigned int length = sizeof(values) / sizeof(values[0]);\
+    for (int i=0; i<length; i++) {\
+      name = values[i];\
+      MU_SETUP_TIMER;\
+			if (minunit_setup) (*minunit_setup)();\
+			minunit_status = 0;\
+			test();\
+			minunit_run++;\
+			MU_CHECK_AND_FAIL;\
+			fflush(stdout);\
+			if (minunit_teardown) (*minunit_teardown)();\
+    }\
 )
 
 /*  Report */
