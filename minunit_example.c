@@ -6,8 +6,17 @@ static double dbar = 0.1;
 static const char* foostring = "Thisstring";
 
 void test_setup(void) {
+	/* Maybe allocate some memory */
+}
+
+void test_before_each(void) {
 	foo = 7;
 	bar = 4;
+}
+
+void test_after_each(void) {
+	foo = -1;
+	bar = -1;
 }
 
 void test_teardown(void) {
@@ -60,7 +69,7 @@ MU_TEST(test_string_eq_fail){
 
 
 MU_TEST_SUITE(test_suite) {
-	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+	MU_SUITE_CONFIGURE(&test_setup, &test_teardown, &test_before_each, &test_after_each);
 
 	MU_RUN_TEST(test_check);
 	MU_RUN_TEST(test_assert);
