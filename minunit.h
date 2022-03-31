@@ -87,6 +87,10 @@ static char minunit_last_message[MINUNIT_MESSAGE_LEN];
 static void (*minunit_setup)(void) = NULL;
 static void (*minunit_teardown)(void) = NULL;
 
+/*  Test before_each and after_each function pointers */
+static void (*minunit_before_each)(void) = NULL;
+static void (*minunit_after_each)(void) = NULL;
+
 /*  Definitions */
 #define MU_TEST(method_name) static void method_name(void)
 #define MU_TEST_SUITE(suite_name) static void suite_name(void)
@@ -98,14 +102,20 @@ static void (*minunit_teardown)(void) = NULL;
 /*  Run test suite and unset setup and teardown functions */
 #define MU_RUN_SUITE(suite_name) MU__SAFE_BLOCK(\
 	suite_name();\
+	if (minunit_teardown) (*minunit_teardown)();\
 	minunit_setup = NULL;\
 	minunit_teardown = NULL;\
+	minunit_before_each = NULL;\
+	minunit_after_each = NULL;\
 )
 
 /*  Configure setup and teardown functions */
-#define MU_SUITE_CONFIGURE(setup_fun, teardown_fun) MU__SAFE_BLOCK(\
+#define MU_SUITE_CONFIGURE(setup_fun, teardown_fun, before_each_fun, after_each_fun) MU__SAFE_BLOCK(\
 	minunit_setup = setup_fun;\
 	minunit_teardown = teardown_fun;\
+	minunit_before_each = before_each_fun;\
+	minunit_after_each = after_each_fun;\
+	if (minunit_setup) (*minunit_setup)();\
 )
 
 /*  Test runner */
@@ -114,7 +124,7 @@ static void (*minunit_teardown)(void) = NULL;
 		minunit_real_timer = mu_timer_real();\
 		minunit_proc_timer = mu_timer_cpu();\
 	}\
-	if (minunit_setup) (*minunit_setup)();\
+	if (minunit_before_each) (*minunit_before_each)();\
 	minunit_status = 0;\
 	test();\
 	minunit_run++;\
@@ -124,7 +134,7 @@ static void (*minunit_teardown)(void) = NULL;
 		printf("\n%s\n", minunit_last_message);\
 	}\
 	fflush(stdout);\
-	if (minunit_teardown) (*minunit_teardown)();\
+	if (minunit_after_each) (*minunit_after_each)();\
 )
 
 /*  Report */
@@ -211,7 +221,7 @@ static void (*minunit_teardown)(void) = NULL;
 	if (!minunit_tmp_r) {\
 		minunit_tmp_r = "<null pointer>";\
 	}\
-	if(strcmp(minunit_tmp_e, minunit_tmp_r)) {\
+	if (strcmp(minunit_tmp_e, minunit_tmp_r)) {\
 		snprintf(minunit_last_message, MINUNIT_MESSAGE_LEN, "%s failed:\n\t%s:%d: '%s' expected but was '%s'", __func__, __FILE__, __LINE__, minunit_tmp_e, minunit_tmp_r);\
 		minunit_status = 1;\
 		return;\
