@@ -2,12 +2,14 @@
 
 static int foo = 0;
 static int bar = 0;
+static long lbar = 0;
 static double dbar = 0.1;
 static const char* foostring = "Thisstring";
 
 void test_setup(void) {
 	foo = 7;
 	bar = 4;
+	lbar = 9L;
 }
 
 void test_teardown(void) {
@@ -38,6 +40,22 @@ MU_TEST(test_assert_int_eq_fail) {
 	mu_assert_int_eq(5, bar);
 }
 
+MU_TEST(test_assert_long_eq) {
+	mu_assert_long_eq(9, lbar);
+}
+
+MU_TEST(test_assert_long_eq_fail) {
+	mu_assert_long_eq(5, lbar);
+}
+
+MU_TEST(test_assert_long_eq_fail_msg) {
+	mu_assert_long_eq_msg(5, lbar, ", lbar should be 5\n");
+}
+
+MU_TEST(test_assert_long_eq_fail_msg_args) {
+	mu_assert_long_eq_msg(5, lbar, ", lbar should be %d\n", 5);
+}
+
 MU_TEST(test_assert_double_eq) {
 	mu_assert_double_eq(0.1, dbar);
 }
@@ -65,13 +83,17 @@ MU_TEST_SUITE(test_suite) {
 	MU_RUN_TEST(test_check);
 	MU_RUN_TEST(test_assert);
 	MU_RUN_TEST(test_assert_int_eq);
+	MU_RUN_TEST(test_assert_long_eq);
 	MU_RUN_TEST(test_assert_double_eq);
 
 	MU_RUN_TEST(test_check_fail);
 	MU_RUN_TEST(test_assert_fail);
 	MU_RUN_TEST(test_assert_int_eq_fail);
+	MU_RUN_TEST(test_assert_long_eq_fail);
+	MU_RUN_TEST(test_assert_long_eq_fail_msg);
+	MU_RUN_TEST(test_assert_long_eq_fail_msg_args);
 	MU_RUN_TEST(test_assert_double_eq_fail);
-	
+
 	MU_RUN_TEST(test_string_eq);
 	MU_RUN_TEST(test_string_eq_fail);
 
