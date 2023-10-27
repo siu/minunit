@@ -95,11 +95,14 @@ static void (*minunit_teardown)(void) = NULL;
 	block\
 } while(0)
 
-/*  Run test suite and unset setup and teardown functions */
+/*  Run test suite, unset setup and teardown functions and reset misc. counters */
 #define MU_RUN_SUITE(suite_name) MU__SAFE_BLOCK(\
 	suite_name();\
 	minunit_setup = NULL;\
 	minunit_teardown = NULL;\
+	minunit_run = 0;
+	minunit_assert = 0;
+	minunit_fail = 0;
 )
 
 /*  Configure setup and teardown functions */
