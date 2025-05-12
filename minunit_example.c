@@ -9,7 +9,7 @@ void test_setup(void) {
 	foo = 7;
 	bar = 4;
 }
-
+//hello
 void test_teardown(void) {
 	/* Nothing */
 }
