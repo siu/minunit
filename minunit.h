@@ -26,7 +26,7 @@
 #ifdef __cplusplus
 	extern "C" {
 #endif
-
+//hello
 #if defined(_WIN32)
 #include <Windows.h>
 #if defined(_MSC_VER) && _MSC_VER < 1900
