@@ -220,7 +220,7 @@ static void (*minunit_teardown)(void) = NULL;
 	}\
 )
 
-#define mu_assert_size_equal(expected, result) MU__SAFE_BLOCK(\
+#define mu_assert_size_eq(expected, result) MU__SAFE_BLOCK(\
 	size_t minunit_tmp_e;\
 	size_t minunit_tmp_r;\
 	minunit_assert++;\
