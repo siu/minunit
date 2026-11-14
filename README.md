@@ -1,4 +1,7 @@
-## MinUnit
+# MinUnit
+
+> This repository is no longer maintained. Development continues in the fork at
+> <https://github.com/erikarn/minunit>.
 
 Minunit is a minimal unit testing framework for C/C++ self-contained in a
 single header file.
@@ -8,7 +11,7 @@ types.  It reports the summary of the number of tests run, number of assertions
 and time elapsed.
 
 Note that this project is based on:
-http://www.jera.com/techinfo/jtns/jtn002.html
+<http://www.jera.com/techinfo/jtns/jtn002.html>
 
 ## How to use it
 
@@ -18,16 +21,16 @@ This is a minimal test suite written with minunit:
 #include "minunit.h"
 
 MU_TEST(test_check) {
-	mu_check(5 == 7);
+ mu_check(5 == 7);
 }
 MU_TEST_SUITE(test_suite) {
-	MU_RUN_TEST(test_check);
+ MU_RUN_TEST(test_check);
 }
 
 int main(int argc, char *argv[]) {
-	MU_RUN_SUITE(test_suite);
-	MU_REPORT();
-	return MU_EXIT_CODE;
+ MU_RUN_SUITE(test_suite);
+ MU_REPORT();
+ return MU_EXIT_CODE;
 }
 ```
 
@@ -36,7 +39,7 @@ Which will produce the following output:
 ```
 F
 test_check failed:
-	readme_sample.c:4: 5 == 7
+ readme_sample.c:4: 5 == 7
 
 
 1 tests, 1 assertions, 1 failures
